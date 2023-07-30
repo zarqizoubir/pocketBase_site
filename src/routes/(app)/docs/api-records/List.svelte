@@ -1,10 +1,11 @@
 <script>
     import Accordion from "@/components/Accordion.svelte";
     import CodeBlock from "@/components/CodeBlock.svelte";
-    import SdkTabs from "@/components/SdkTabs.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
     import FilterSyntax from "@/components/FilterSyntax.svelte";
     import ExpandQueryParam from "@/components/ExpandQueryParam.svelte";
     import FieldsQueryParam from "@/components/FieldsQueryParam.svelte";
+    import SkipTotalQueryParam from "@/components/SkipTotalQueryParam.svelte";
 
     const responses = [
         {
@@ -14,6 +15,7 @@
                   "page": 1,
                   "perPage": 100,
                   "totalItems": 2,
+                  "totalPages": 1,
                   "items": [
                     {
                       "id": "ae40239d2bc4477",
@@ -60,11 +62,7 @@
     let responseTab = responses[0].code;
 </script>
 
-<Accordion single>
-    <svelte:fragment slot="header">
-        <strong>List/Search records</strong>
-    </svelte:fragment>
-
+<Accordion single title="List/Search records">
     <div class="content m-b-sm">
         <p>Returns a paginated records list, supporting sorting and filtering.</p>
         <p>
@@ -79,7 +77,7 @@
         </p>
     </div>
 
-    <SdkTabs
+    <CodeTabs
         js={`
             import PocketBase from 'pocketbase';
 
@@ -229,6 +227,7 @@
             </tr>
             <ExpandQueryParam />
             <FieldsQueryParam />
+            <SkipTotalQueryParam />
         </tbody>
     </table>
 

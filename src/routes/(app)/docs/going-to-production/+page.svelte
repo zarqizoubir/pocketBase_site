@@ -11,21 +11,35 @@
 
 <HeadingLink title="Minimal setup" tag="h5" />
 <p>
-    One of the best PocketBase features is that it's completely portable. This mean that it doesn't require any
-    external dependency and <strong>
-        could be deployed by just uploading the executable on your server
-    </strong>.
+    One of the best PocketBase features is that it's completely portable. This mean that it doesn't require
+    any external dependency and
+    <strong>could be deployed by just uploading the executable on your server</strong>.
 </p>
 <p>
     Here is an example for starting a production HTTPS server (auto managed TLS with Let's Encrypt) on clean
-    Ubuntu 22.04 installation:
+    Ubuntu 22.04 installation.
 </p>
 <ol>
+    <li value="0">
+        <p>Consider the following app directory structure:</p>
+        <CodeBlock
+            language="html"
+            content={`
+                yourapp/
+                    pb_migrations/
+                    pb_hooks/
+                    pocketbase
+            `}
+        />
+    </li>
     <li>
-        <p>Upload the binary and anything else related to your remote server, for example using rsync:</p>
+        <p>
+            Upload the binary and anything else related to your remote server, for example using
+            <strong>rsync</strong>:
+        </p>
         <CodeBlock
             content={`
-                rsync -avz -e ssh /local/path/to/pocketbase root@YOUR_SERVER_IP:/root/pb
+                rsync -avz -e ssh /local/path/to/yourapp root@YOUR_SERVER_IP:/root/pb
             `}
         />
     </li>
@@ -65,12 +79,11 @@
         </blockquote>
     </li>
     <li>
-        <p>(Optional) Systemd service</p>
+        <p>(Optional) systemd service</p>
         <p>
-            To allow your application to start on its own (or to restart in case the process get killed), you
-            could create a <em>Systemd</em> service for it.
-        </p>
-        <p>
+            You can skip step 3 and create a <strong>Systemd service</strong>
+            to allow your application to start/restart on its own.
+            <br />
             Here is an example service file (usually created in
             <code>/lib/systemd/system/pocketbase.service</code>):
         </p>
@@ -147,7 +160,7 @@
     Dockerfile as an example:
 </p>
 <CodeBlock
-    language="docker"
+    language="html"
     content={`
         FROM alpine:latest
 
@@ -165,6 +178,12 @@
         ADD https://github.com/pocketbase/pocketbase/releases/download/v\${PB_VERSION}/pocketbase_\${PB_VERSION}_linux_amd64.zip /tmp/pb.zip
         RUN unzip /tmp/pb.zip -d /pb/
 
+        # uncomment to copy the local pb_migrations dir into the image
+        # COPY ./pb_migrations /pb/pb_migrations
+
+        # uncomment to copy the local pb_hooks dir into the image
+        # COPY ./pb_hooks /pb/pb_hooks
+
         EXPOSE 8080
 
         # start PocketBase
@@ -179,19 +198,34 @@
             target="_blank"
             rel="noopener noreferrer"
         >
-            "Host for free on Fly.io" guide.
+            "Host for free on Fly.io"
         </a>
+        or
+        <a
+            href="https://github.com/pocketbase/pocketbase/discussions/2856"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            "Host for free on Hop.io"
+        </a>
+        guides.
     </em>
 </p>
 
 <HeadingLink title="Backup and Restore" />
-<p></p>
+<p />
 <p>
-    PocketBase v0.16+ comes with built-in backups and restore APIs that could be accessed from the Admin UI
-    (<em>Settings</em> > <em>Backups</em>):
+    PocketBase v0.16+ comes with built-in backups and restore APIs that could be accessed from the Admin UI (<em
+        >Settings</em
+    >
+    > <em>Backups</em>):
 </p>
 <img src="/images/screenshots/backups.png" alt="Backups settings screenshot" class="screenshot m-b-xs" />
 <p>
+    <strong>
+        Note that the application will be temporary set in read-only mode during the backup's ZIP generation.
+    </strong>
+    <br />
     Backups can be stored locally (default) or in an external S3 storage.
 </p>
 <p>
@@ -250,6 +284,7 @@
     <span class="label label-primary">optional</span>
     <HeadingLink title="Enable settings encryption" tag="h5" />
 </header>
+<p class="txt-bold txt-hint">It is fine to ignore the below if you are not sure whether you need it.</p>
 <p>
     By default, PocketBase stores the applications settings in the database as plain JSON text, including the
     secret keys for the OAuth2 clients and the SMTP password.

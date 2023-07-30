@@ -1,7 +1,7 @@
 <script>
     import Accordion from "@/components/Accordion.svelte";
     import CodeBlock from "@/components/CodeBlock.svelte";
-    import SdkTabs from "@/components/SdkTabs.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
     import ExpandQueryParam from "@/components/ExpandQueryParam.svelte";
     import FieldsQueryParam from "@/components/FieldsQueryParam.svelte";
 
@@ -44,11 +44,7 @@
     let responseTab = responses[0].code;
 </script>
 
-<Accordion single>
-    <svelte:fragment slot="header">
-        <strong>View record</strong>
-    </svelte:fragment>
-
+<Accordion single title="View record">
     <div class="content m-b-sm">
         <p>Returns a single collection record by its ID.</p>
         <p>
@@ -63,7 +59,7 @@
         </p>
     </div>
 
-    <SdkTabs
+    <CodeTabs
         js={`
             import PocketBase from 'pocketbase';
 

@@ -1,7 +1,7 @@
 <script>
     import Accordion from "@/components/Accordion.svelte";
     import CodeBlock from "@/components/CodeBlock.svelte";
-    import SdkTabs from "@/components/SdkTabs.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
     import FieldsQueryParam from "@/components/FieldsQueryParam.svelte";
 
     const responses = [
@@ -94,17 +94,13 @@
     let responseTab = responses[0].code;
 </script>
 
-<Accordion single>
-    <svelte:fragment slot="header">
-        <strong>View collection</strong>
-    </svelte:fragment>
-
+<Accordion single title="View collection">
     <div class="content m-b-sm">
         <p>Returns a single Collection by its ID or name.</p>
         <p>Only admins can access this action.</p>
     </div>
 
-    <SdkTabs
+    <CodeTabs
         js={`
             import PocketBase from 'pocketbase';
 

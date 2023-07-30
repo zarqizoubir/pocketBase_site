@@ -1,7 +1,7 @@
 <script>
     import HeadingLink from "@/components/HeadingLink.svelte";
     import ThumbFormats from "@/components/ThumbFormats.svelte";
-    import SdkTabs from "@/components/SdkTabs.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
     import Toc from "@/components/Toc.svelte";
 </script>
 
@@ -22,7 +22,7 @@
     the example file field "documents" using the SDKs:
 </p>
 <!-- prettier-ignore -->
-<SdkTabs
+<CodeTabs
     js={`
         // Example HTML:
         // <input type="file" id="fileInput" />
@@ -110,12 +110,12 @@
     file field to a zero-value <br /> (<code>null</code>, <code>[]</code>, empty string, etc.).
 </p>
 <p>
-    If you want to <strong>delete only a single file from a multiple file upload field</strong>, you could
-    suffix the field name with <code>-</code> and filename(s) you want to delete. Here are some examples using
-    the SDKs:
+    If you want to <strong>delete individual file(s) from a multiple file upload field</strong>, you could
+    suffix the field name with <code>-</code> and specify the filename(s) you want to delete. Here are some examples
+    using the SDKs:
 </p>
 <!-- prettier-ignore -->
-<SdkTabs
+<CodeTabs
     js={`
         import PocketBase from 'pocketbase';
 
@@ -188,7 +188,8 @@
 </p>
 
 <!-- prettier-ignore -->
-<SdkTabs
+<CodeTabs
+    class="m-t-10 m-b-xs"
     js={`
         import PocketBase from 'pocketbase';
 
@@ -232,6 +233,12 @@
         final url = pb.files.getUrl(record, firstFilename, thumb: '100x250');
     `}
 />
+<p>
+    <em>
+        Additionally, to instruct the browser to always download the file instead of showing a preview when
+        accessed directly, you can append the <code>?download</code> query parameter to the file url.
+    </em>
+</p>
 
 <HeadingLink title="Protected files" />
 <p>By default all files are public accessible if you know their full url.</p>
@@ -258,7 +265,7 @@
 <img src="/images/screenshots/file-options.png" alt="File options panel" class="screenshot" />
 <div class="clearfix m-b-sm" />
 <!-- prettier-ignore -->
-<SdkTabs
+<CodeTabs
     js={`
         import PocketBase from 'pocketbase';
 

@@ -1,7 +1,7 @@
 <script>
     import Accordion from "@/components/Accordion.svelte";
     import CodeBlock from "@/components/CodeBlock.svelte";
-    import SdkTabs from "@/components/SdkTabs.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
     import FieldsQueryParam from "@/components/FieldsQueryParam.svelte";
 
     const responses = [
@@ -45,16 +45,12 @@
     let responseTab = responses[0].code;
 </script>
 
-<Accordion single>
-    <svelte:fragment slot="header">
-        <strong>List auth methods</strong>
-    </svelte:fragment>
-
+<Accordion single title="List auth methods">
     <div class="content m-b-sm">
         <p>Returns a public list with the allowed collection authentication methods.</p>
     </div>
 
-    <SdkTabs
+    <CodeTabs
         js={`
             import PocketBase from 'pocketbase';
 

@@ -1,7 +1,7 @@
 <script>
     import Accordion from "@/components/Accordion.svelte";
     import CodeBlock from "@/components/CodeBlock.svelte";
-    import SdkTabs from "@/components/SdkTabs.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
     import FieldsQueryParam from "@/components/FieldsQueryParam.svelte";
 
     const responses = [
@@ -55,17 +55,12 @@
     let responseTab = responses[0].code;
 </script>
 
-<Accordion single>
-    <svelte:fragment slot="header">
-        <strong>Auth refresh</strong>
-        <div class="flex-fill" />
-    </svelte:fragment>
-
+<Accordion single title="Auth refresh">
     <div class="content m-b-sm">
         <p>Returns a new auth response (token and admin data) for already authenticated admin.</p>
     </div>
 
-    <SdkTabs
+    <CodeTabs
         js={`
             import PocketBase from 'pocketbase';
 

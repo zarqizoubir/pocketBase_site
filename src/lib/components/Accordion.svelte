@@ -1,6 +1,6 @@
 <script>
     import { onMount, createEventDispatcher } from "svelte";
-    import { slide } from "svelte/transition";
+    import HeadingLink from "@/components/HeadingLink.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -13,6 +13,7 @@
     export let active = false;
     export let interactive = true;
     export let single = false; // ensures that only one accordion is expanded in its given parent container
+    export let title = "Toggle"; // fallback accordion header (it can be replaced with custom formatting by specifying the "header" slot)
 
     $: if (active) {
         clearTimeout(expandTimeoutId);
@@ -25,7 +26,7 @@
                     block: "start",
                 });
             }
-        }, 200);
+        }, 0);
     }
 
     export function isExpanded() {
@@ -35,6 +36,13 @@
     export function expand() {
         collapseSiblings();
         active = true;
+
+        // replace the current url hash with the heading id (if any)
+        const id = getDynamicHeadingId();
+        if (id && history) {
+            history.replaceState({}, "", "#" + id);
+        }
+
         dispatch("expand");
     }
 
@@ -63,6 +71,10 @@
                 handler.click(); // @todo consider more reliable approach
             }
         }
+    }
+
+    function getDynamicHeadingId() {
+        return accordionElem?.querySelector(".accordion-header .heading-link")?.id;
     }
 
     function keyToggle(e) {
@@ -95,12 +107,13 @@
         class:interactive
         on:click|preventDefault={() => interactive && toggle()}
     >
-        <slot name="header" {active} />
+        <slot name="header" {active} {toggle} {expand} {collapse}>
+            <HeadingLink {title} tag="strong" />
+        </slot>
     </button>
 
-    {#if active}
-        <div class="accordion-content" transition:slide|local={{ duration: 150 }}>
-            <slot />
-        </div>
-    {/if}
+    <!-- note: the accordion content is added to the dom even when not active so that it can be indexed -->
+    <div class="accordion-content" class:hidden={!active}>
+        <slot />
+    </div>
 </div>

@@ -5,7 +5,16 @@
     <div class="content">
         <p>
             Please keep in mind that PocketBase is still under active development and full backward
-            compatibility is not guaranteed before reaching v1.0.0.
+            compatibility is not guaranteed before reaching v1.0.0. PocketBase is not recommended for
+            production critical applications yet, unless you are fine with reading the
+            <a
+                href="{import.meta.env.PB_REPO_URL}/blob/master/CHANGELOG.md"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                changelog
+            </a>
+            and applying some manual migration steps from time to time.
         </p>
     </div>
 </div>
@@ -14,9 +23,7 @@
     PocketBase is an open source backend consisting of embedded database (SQLite) with realtime subscriptions,
     built-in auth management, convenient dashboard UI and simple REST-ish API.
 </p>
-
 <p>The easiest way to get started is to download the prebuilt minimal PocketBase app:</p>
-
 <ul>
     <li>
         <div class="inline-flex flex-gap-5">
@@ -86,9 +93,8 @@
 <hr />
 
 <p>
-    Once you've downloaded and extracted the archive, you could start the application by running the following
-    console command in the extracted directory:
-    <code><strong>./pocketbase serve</strong></code>.
+    Once you've extracted the archive, you could start the application by running
+    <code><strong>./pocketbase serve</strong></code> in the extracted directory.
 </p>
 <p>
     <strong>And that's it!</strong> A web server will be started with the following routes:
@@ -98,7 +104,7 @@
         <ul>
             <li class="m-b-5">
                 <!-- svelte-ignore security-anchor-rel-noreferrer -->
-                <a href="http://127.0.0.1:8090" class="link-primary txt-bold" target="_blank">
+                <a href="http://127.0.0.1:8090" target="_blank">
                     <code>http://127.0.0.1:8090</code>
                 </a>
                 - if <code>pb_public</code> directory exists, serves the static content from it (html, css, images,
@@ -106,14 +112,14 @@
             </li>
             <li class="m-b-5">
                 <!-- svelte-ignore security-anchor-rel-noreferrer -->
-                <a href="http://127.0.0.1:8090/_/" class="link-primary txt-bold" target="_blank">
+                <a href="http://127.0.0.1:8090/_/" target="_blank">
                     <code>http://127.0.0.1:8090/_/</code>
                 </a>
                 - Admin dashboard UI
             </li>
             <li>
                 <!-- svelte-ignore security-anchor-rel-noreferrer -->
-                <a href="http://127.0.0.1:8090/api/" class="link-primary txt-bold" target="_blank">
+                <a href="http://127.0.0.1:8090/api/" target="_blank">
                     <code>http://127.0.0.1:8090/api/</code>
                 </a>
                 - REST API
@@ -136,23 +142,16 @@
     </li>
     <li>
         <code>pb_migrations</code> - contains JS migration files with your collection changes (can be safely
-        commited in your repository).
+        committed in your repository).
         <br />
         <div class="txt-hint m-b-xs">
             You can even write custom migration scripts. For more info check the
-            <a href="/docs/migrations">Migrations docs</a>.
+            <a href="/docs/go-migrations">JS migrations docs</a>.
         </div>
     </li>
 </ul>
-
 <p>
     You could find all available commands and their options by running
     <code>./pocketbase --help</code> or
     <code>./pocketbase [command] --help</code>
-</p>
-
-<p class="txt-bold txt-hint">
-    For more advanced usage and customizations, you could also use PocketBase as a Go framework (
-    <a href="/docs/use-as-framework">see the <em>Advanced</em> section</a>
-    ).
 </p>

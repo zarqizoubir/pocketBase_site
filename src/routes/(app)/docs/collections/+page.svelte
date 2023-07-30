@@ -110,7 +110,7 @@
     <span class="txt-hint">
         Usually you'll create your collections from the Admin UI and manage your records with the API using
         the
-        <a href="/docs/client-side-integration">client-side SDKs</a>.
+        <a href="/docs/client-side-sdks">client-side SDKs</a>.
     </span>
 </p>
 <p>Here is what the collection panel looks like:</p>
@@ -153,6 +153,15 @@
         GROUP BY posts.id
     `}
 />
+<div class="alert alert-info m-t-sm">
+    <div class="icon">
+        <i class="ri-information-line" />
+    </div>
+    <div class="content">
+        View collections don't receive realtime events because they don't have create/update/delete
+        operations.
+    </div>
+</div>
 
 <HeadingLink title="Auth collection" />
 <p>

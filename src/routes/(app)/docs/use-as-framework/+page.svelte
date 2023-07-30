@@ -1,132 +1,115 @@
 <script>
-    import CodeBlock from "@/components/CodeBlock.svelte";
+    import CodeTabs from "@/components/CodeTabs.svelte";
+    import { extendGroup } from "@/stores/preferences";
 </script>
 
 <p>
-    The biggest difference from other backend solutions like Firebase, Supabase, Nhost, etc., is that
-    <strong>
-        PocketBase actually could be used as a Go framework that enables you to build your own custom app
-        specific business logic and still have a single portable executable at the end.
-    </strong>
+    One of the main feature of PocketBase is that
+    <strong>it can be used as a framework</strong> which enables you to write your own custom app business
+    logic in
+    <a href="/docs/go-overview">Go</a> or <a href="/docs/js-overview">JavaScript</a> and still have a portable
+    backend at the end.
 </p>
-
-<p>The minimal PocketBase application looks like this:</p>
-<CodeBlock
-    language="go"
-    content={`
-        // main.go
-        package main
-
-        import (
-            "log"
-
-            "github.com/pocketbase/pocketbase"
-        )
-
-        func main() {
-            app := pocketbase.New()
-
-            if err := app.Start(); err != nil {
-                log.Fatal(err)
-            }
-        }
-    `}
-/>
 
 <p>
-    Running/building the application is the same as for any other Go program, aka. just
-    <code>go run main.go</code> and <code>go build</code>.
+    <strong>
+        Choose <a href="/docs/go-overview" class="label label-info">Extend with Go</a> if you are already familiar
+        with the language or have the time to learn it.
+    </strong>
+    As the primary PocketBase language, the Go APIs are better documented and you'll be able to integrate with
+    any 3rd party Go library since you'll have more control over the application flow. The only drawback is that
+    the Go APIs are slightly more verbose and it may require some time to get used to, especially if this is your
+    first time working with Go.
 </p>
-<div class="alert alert-info">
-    <div class="icon">
-        <i class="ri-information-line" />
-    </div>
-    <div class="content">
-        <p>
-            <strong>PocketBase embeds SQLite, but doesn't require CGO</strong>.
-            <br />
-            If CGO is enabled, it will use
-            <a href="https://pkg.go.dev/github.com/mattn/go-sqlite3" target="_blank" rel="noreferrer noopener"
-                >mattn/go-sqlite3</a
-            >
-            driver, otherwise -
-            <a href="https://pkg.go.dev/modernc.org/sqlite" target="_blank" rel="noreferrer noopener"
-                >modernc.org/sqlite</a
-            >.
-            <br />
-            Enable CGO only if you really need to squeeze the read/write query performance at the expense of complicating
-            cross compilation.
-        </p>
-    </div>
-</div>
 
-<hr />
+<p>
+    <strong>
+        Choose <a href="/docs/js-overview" class="label label-warning">Extend with JavaScript</a>
+        if you don't intend to write too much custom code and want a quick way to explore the PocketBase capabilities.
+    </strong>
+    The embedded JavaScript engine is a pluggable wrapper around the existing Go APIs, so most of the time the
+    slight performance penalty will be negliable because it'll invoke the Go functions under the hood.
+    <br />
+    As a bonus, because the JS VM mirrors the Go APIs, you would be able migrate gradually without much code changes
+    from JS -> Go at later stage in case you hit a bottleneck or want more control over the execution flow.
+</p>
 
-<p>PocketBase could be extended by:</p>
-
+<p>With both Go and JavaScript, you can:</p>
 <ul>
     <li class="m-b-sm">
-        <a href="/docs/event-hooks" class="txt-bold">Binding to event hooks and modifying responses</a>, eg.:
-        <CodeBlock
-            language="go"
-            content={`
-                app.OnRecordBeforeCreateRequest().Add(func(e *core.RecordCreateEvent) error {
-                    // overwrite the newly submitted "posts" record status to pending
-                    if e.Record.Collection().Name == "posts" {
+        <strong>Register custom routes:</strong>
+        <CodeTabs
+            group={extendGroup}
+            go={`
+                app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+                    e.Router.GET("/hello", func(c echo.Context) error {
+                        return c.String(http.StatusOK, "Hello world!")
+                    }, apis.ActivityLogger(app), apis.RequireAdminAuth())
+
+                    return nil
+                })
+            `}
+            js={`
+                routerAdd("GET", "/hello", (c) => {
+                    return c.string(200, "Hello world!")
+                }, $apis.activityLogger($app), $apis.requireAdminAuth())
+            `}
+        />
+    </li>
+    <li class="m-b-sm">
+        <strong>Bind to event hooks and intercept responses:</strong>
+        <CodeTabs
+            group={extendGroup}
+            go={`
+                app.OnRecordBeforeCreateRequest("posts").Add(func(e *core.RecordCreateEvent) error {
+                    requestInfo := apis.RequestInfo(e.HttpContext)
+
+                    // if not an admin, overwrite the newly submitted "posts" record status to pending
+                    if requestInfo.Admin == nil {
                         e.Record.Set("status", "pending")
                     }
 
                     return nil
                 })
             `}
-        />
-    </li>
-    <li class="m-b-sm">
-        <a href="/docs/router" class="txt-bold">Registering custom routes</a>, eg:
-        <CodeBlock
-            language="go"
-            content={`
-                app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-                    e.Router.AddRoute(echo.Route{
-                        Method: http.MethodGet,
-                        Path:   "/api/hello",
-                        Handler: func(c echo.Context) error {
-                            return c.String(http.StatusOK, "Hello world!")
-                        },
-                        Middlewares: []echo.MiddlewareFunc{
-                            apis.ActivityLogger(app),
-                            apis.RequireAdminAuth(),
-                        },
-                    })
+            js={`
+                onRecordBeforeCreateRequest((e) => {
+                    let requestInfo = $apis.requestInfo(e.httpContext)
 
-                    return nil
-                })
+                    // if not an admin, overwrite the newly submitted "posts" record status to pending
+                    if (!requestInfo.admin) {
+                        e.record.set("status", "pending")
+                    }
+                }, "posts")
             `}
         />
     </li>
     <li class="m-b-sm">
-        <strong>Registering custom console commands</strong>, eg.:
-        <CodeBlock
-            language="go"
-            content={`
+        <strong>Register custom console commands:</strong>
+        <CodeTabs
+            group={extendGroup}
+            go={`
                 app.RootCmd.AddCommand(&cobra.Command{
                     Use: "hello",
-                    Run: func(command *cobra.Command, args []string) {
+                    Run: func(cmd *cobra.Command, args []string) {
                         print("Hello world!")
                     },
                 })
             `}
+            js={`
+                $app.rootCmd.addCommand(new Command({
+                    use: "hello",
+                    run: (cmd, args) => {
+                        console.log("Hello world!")
+                    },
+                }))
+            `}
         />
     </li>
-    <li>
-        and much more...
-        <p class="txt-hint">
-            You may also find useful checking the
-            <a href={import.meta.env.PB_REPO_URL} target="_blank" rel="noreferrer noopener">repo source</a>
-            and the
-            <a href={import.meta.env.PB_GODOC_URL} target="_blank" rel="noreferrer noopener">
-                package documentation
-            </a>.
-        </p>
-    </li>
+    <li>and many more...</li>
 </ul>
+
+<p class="m-t-base">
+    For further info, please check the related <a href="/docs/go-overview">Extend with Go</a> or
+    <a href="/docs/js-overview">Extend with JavaScript</a> guides.
+</p>
